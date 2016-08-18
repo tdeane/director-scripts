@@ -20,6 +20,6 @@ set -x -e
 # REPLACE_ME - Replace user name from centos to ec2-user if using RHEL base AMI
 sudo -u hdfs hadoop fs -mkdir /user/centos
 sudo -u hdfs hadoop fs -chown centos:centos /user/centos
-hive -f query.q
+hive -f query.sql
 
 exit 0
