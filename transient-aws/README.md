@@ -12,7 +12,9 @@ These scripts can be used as an example end-to-end transient demo for a Hive que
 scp -i ~/.ssh/my_aws_key.pem ~/.ssh/my_aws_key.pem ec2-user@[public-ip-address]:/home/ec2-user/.ssh/id_rsa
 ```
 - SSH into Director instance 
-**All following steps are to be executed in the Director instance)**
+
+#### All following steps are to be executed in the Director instance)
+
 - Add S3 keys in the REPLACE_ME sections of install_director.sh (only needed if copying log files to S3)
 - Install Director and other packages: 
 
@@ -39,8 +41,8 @@ cd preloaded-ami-builder
 - If not using preloaded AMIs, use hive-example/cluster.conf instead and update hive/run_all.sh to point to cluster.conf.
 
 ### Prepare the Hive Query
-- Open hive-example/query.q and update the query or use the sample one
-- If using the sample one, make sure to replace the output s3 location
+- Open hive-example/query.sql and update the query or use the sample one
+- If using the sample one, make sure to replace all s3 locations with your own buckets
 
 ### Set S3 output log file
 - Open hive-example/dispatch.sh and update the REPLACE_ME section for the S3 location to store the log files
