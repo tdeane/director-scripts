@@ -239,19 +239,21 @@ stored as parquet
 location 's3a://cloudera-demo/datasets/tpcds/nonpartitioned/parq/scale_1/customer_address';
 
 INSERT OVERWRITE DIRECTORY 's3a://cloudera-demo/output/cdh-43/'
-select  s_store_name, s_store_id,
-        sum(case when (d_day_name='Sunday') then ss_sales_price else null end) sun_sales,
-        sum(case when (d_day_name='Monday') then ss_sales_price else null end) mon_sales,
-        sum(case when (d_day_name='Tuesday') then ss_sales_price else  null end) tue_sales,
-        sum(case when (d_day_name='Wednesday') then ss_sales_price else null end) wed_sales,
-        sum(case when (d_day_name='Thursday') then ss_sales_price else null end) thu_sales,
-        sum(case when (d_day_name='Friday') then ss_sales_price else null end) fri_sales,
-        sum(case when (d_day_name='Saturday') then ss_sales_price else null end) sat_sales
- from date_dim, store_sales, store
- where date_dim.d_date_sk = store_sales.ss_sold_date_sk and
-       store.s_store_sk = store_sales.ss_store_sk and
-       s_gmt_offset = -6 and
-       d_year = 1998
- group by s_store_name, s_store_id
- order by s_store_name, s_store_id,sun_sales,mon_sales,tue_sales,wed_sales,thu_sales,fri_sales,sat_sales
+select  dt.d_year 
+       ,item.i_brand_id brand_id 
+       ,item.i_brand brand
+       ,sum(ss_ext_sales_price) sum_agg
+ from  date_dim dt 
+      ,store_sales
+      ,item
+ where dt.d_date_sk = store_sales.ss_sold_date_sk
+   and store_sales.ss_item_sk = item.i_item_sk
+   and item.i_manufact_id = 436
+   and dt.d_moy=12
+ group by dt.d_year
+      ,item.i_brand
+      ,item.i_brand_id
+ order by dt.d_year
+         ,sum_agg desc
+         ,brand_id
  limit 100;
