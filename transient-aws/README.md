@@ -6,7 +6,10 @@ These scripts can be used as an example end-to-end transient demo for a Hive que
 
 - Configure AWS settings: http://www.cloudera.com/documentation/director/latest/topics/director_aws_setup_client.html
 - Launch Director Instance (this script was tested with RHEL 7.2): http://www.cloudera.com/documentation/director/latest/topics/director_deployment_start_launcher.html
-- Copy all files in this repo to the Director instance
+- Copy all files in the transient-aws folder to the Director instance
+```sh
+scp -r -i ~/.ssh/my_aws_key.pem director-scripts/transient-aws ec2-user@[public-ip-address]:/home/ec2-user/
+```
 - Copy your AWS SSH private key to the instance's  ~/.ssh/id_rsa (we will use this in the last step)
 ```sh
 scp -i ~/.ssh/my_aws_key.pem ~/.ssh/my_aws_key.pem ec2-user@[public-ip-address]:/home/ec2-user/.ssh/id_rsa
