@@ -13,7 +13,7 @@ scp -i ~/.ssh/my_aws_key.pem ~/.ssh/my_aws_key.pem ec2-user@[public-ip-address]:
 ```
 - SSH into Director instance 
 
-#### All following steps are to be executed in the Director instance)
+#### All following steps are to be executed in the Director instance
 
 - Add S3 keys in the REPLACE_ME sections of install_director.sh (only needed if copying log files to S3)
 - Install Director and other packages: 
