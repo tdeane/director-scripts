@@ -42,7 +42,7 @@ cd preloaded-ami-builder
 
 ### Prepare the Hive Query
 - Open hive-example/query.sql and update the query or use the sample one
-- If using the sample one, make sure to replace all s3 locations with your own buckets
+- If using the sample one, make sure to replace all s3 locations with your own S3 buckets (note that Cloudera will eventually provide a public read-only bucket with sample data)
 
 ### Set S3 output log file
 - Open hive-example/dispatch.sh and update the REPLACE_ME section for the S3 location to store the log files
