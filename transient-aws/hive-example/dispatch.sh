@@ -14,7 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-RANDOM_TOKEN=$(cat /dev/urandom | env LC_CTYPE=C tr -dc 'a-z0-9' | fold -w 12 | head -n 1)
 
 set -o errexit -o pipefail -o nounset
 
@@ -29,6 +28,8 @@ if [[ ! -x "$(command -v wget)" ]]; then
     echo "Required wget command not found"
     exit -1
 fi
+
+RANDOM_TOKEN=$(uuidgen | tr -d '-' | fold -w 12 | head -n 1)
 
 #
 # Cloudera Director server credentials and URL
@@ -64,12 +65,12 @@ Optional arguments:
  -s, --server            server URL (default ${DIRECTOR_SERVER})
  -u, --user              server API admin user (default ${DIRECTOR_USER})
  -p, --password          server API admin password
- -e, --environment       environment name (default ${ENVIRONMENT_NAME})
+ -e, --environment       environment name (random by default with prefix AWS-)
  -d, --deployment        deployment name (default ${DEPLOYMENT_NAME})
  -c, --cluster           cluster name (random by default with prefix job_)
  -g, --gateway-group     gateway group name (default ${GATEWAY_GROUP_NAME})
  -n, --ssh-username      SSH username to use to connect to the gateway (default ${SSH_USERNAME})
- -i, --ssh-private-key   SSH private key to use to  connect to the gateway (default ${SSH_PRIVATE_KEY})
+ -i, --ssh-private-key   SSH private key to use to connect to the gateway (default ${SSH_PRIVATE_KEY})
  -f, --provision-config  Provision a new cluster with the given config file
  -t, --terminate         Terminate the cluster (default ${TERMINATE})
  -k, --keep-cm           Keep CM around if --terminate is true (default ${KEEP_CM})
@@ -124,6 +125,10 @@ case $i in
     PROVISION_CONFIG="${i#*=}"
     shift # past argument=value
     ;;
+    -k=*|--keep-cm=*)
+    KEEP_CM="${i#*=}"
+    shift # past argument=value
+    ;;
     -t|--terminate)
     TERMINATE="true"
     shift
@@ -173,17 +178,17 @@ terminate() {
     echo "Cluster ${CLUSTER_NAME} is terminated"
 
     if [[ "${KEEP_CM}" == "false" ]]; then
-        ENV_URL="${DIRECTOR_SERVER}/api/v4/environments/${ENVIRONMENT_NAME}/deployments/${DEPLOYMENT_NAME}/"
+        DEPLOYMENT_URL="${DIRECTOR_SERVER}/api/v4/environments/${ENVIRONMENT_NAME}/deployments/${DEPLOYMENT_NAME}/"
         echo "Terminating CM Instance"
 
-         #${WGET} --method DELETE "${ENV_URL}"
-        curl -u ${DIRECTOR_USER}:${DIRECTOR_PASSWORD} -X "DELETE" "${ENV_URL}"
+         #${WGET} --method DELETE "${DEPLOYMENT_URL}"
+        curl -u ${DIRECTOR_USER}:${DIRECTOR_PASSWORD} -X "DELETE" "${DEPLOYMENT_URL}"
 
          while
-            STAGE=$(${WGET} -q "${ENV_URL}/status" | jq -r ".stage");
+            STAGE=$(${WGET} -q "${DEPLOYMENT_URL}/status" | jq -r ".stage");
             [ "${STAGE}" == "TERMINATING" ];
         do
-            echo "Environment ${DEPLOYMENT_NAME} is terminating. Waiting 10 seconds"
+            echo "Deployment ${DEPLOYMENT_NAME} is terminating. Waiting 10 seconds"
             sleep 10
         done
     fi
@@ -218,24 +223,31 @@ if [[ -f "${PROVISION_CONFIG}" ]]; then
         [ "${STAGE}" != "READY" ];
     do
         if [ "${STAGE}" == "BOOTSTRAP_FAILED" ]; then
-            echo "Cluster ${CLUSTER_NAME} failed to  bootstrap. Please check server logs."
+            echo "Cluster ${CLUSTER_NAME} failed to bootstrap. Please check server logs."
             exit -1
         fi
         if [[ -z "${STAGE}" ]]; then
             echo "Unable to retrieve status for cluster ${CLUSTER_NAME}. Please check server logs."
             exit -1
         fi
-        echo "Stage is ${STAGE}. Progress: ${progress}%..."
-        if [ "$progress" -lt "100" ]; then
-           let "progress+=1"
-        fi        
-        sleep 8
+        echo "Stage is ${STAGE}. Sleeping for 10 seconds"
+        ### UNCOMMENT THIS IF YOU'D TO ESTIMATE PERCENT PROGRESS WHILE TESTING. 
+        ### UPDATE SLEEP TIME ACCORDINGLY TO APPROXIMATE ACCURATE PROGRESS BAR
+        #echo "Stage is ${STAGE}. Progress: ${progress}%..."
+        #if [ "$progress" -lt "100" ]; then
+        #   let "progress+=1"
+        #fi        
+        sleep 10
     done
 
     echo "Cluster ${CLUSTER_NAME} is provisioned successfully"
     echo "Cluster ${CLUSTER_NAME} is ready to accept jobs"
     echo
+else 
+    echo "Config file not found"
+    exit -1
 fi
+
 
 # Check the existence of the cluster
 ${WGET} -q "${CLUSTER_URL}/status" || { echo "Cluster ${CLUSTER_NAME} not found" >&2; exit -1; }
@@ -292,7 +304,6 @@ if [[ "${SUBMIT_JOB}" == "true" ]]; then
     echo "Starting job: ${JOB_ID}"
     #${SSH} -t sudo sh -e "${JOB_DIR}/${JOB_SCRIPT}"
     ${SSH} -t "cd ${JOB_DIR}; chmod +x ${JOB_SCRIPT}; ./${JOB_SCRIPT}"    
-    mkdir -p logs
     mkdir -p logs/${JOB_ID}
     ${SCP} ${REMOTE}:/tmp/${SSH_USERNAME}/hive.log ./logs/${JOB_ID}/hive.log
     # REPLACE_ME with S3 log location

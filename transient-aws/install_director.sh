@@ -13,9 +13,10 @@ cd ~
 wget http://stedolan.github.io/jq/download/linux64/jq
 chmod +x ./jq
 sudo cp jq /usr/bin
+#### SET PERMISSIONS TO SSH KEY
+chmod 600 ~/.ssh/id_rsa
 #### INSTALL PACKER
 wget https://releases.hashicorp.com/packer/0.10.1/packer_0.10.1_linux_amd64.zip
-sudo yum install -y unzip nano
 unzip packer_0.10.1_linux_amd64.zip
 sudo mv packer /usr/local/bin/
 #### INSTALL AWS CLI (OPTIONAL TO COPY LOGS LATER)

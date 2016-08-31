@@ -27,7 +27,7 @@ scp -i ~/.ssh/my_aws_key.pem ~/.ssh/my_aws_key.pem ec2-user@[public-ip-address]:
 
 ### Prepare AMIs
 - Open preloaded-ami-builder/packer-json/rhel.json
-- Replace all "REPLACE_ME"s with the correct values for your AWS setup.
+- Replace all REPLACE_ME's with the correct values for your AWS setup.
   Note: this script was tested in us-west-2 with Centos 7.2 base AMI images. If you are using us-west-2 you can keep the example AMI IDs, SSH username, and root device name in all files.
 - Run the AMI builder with the following command.  Replace the region, base AMI ID, and target AMI name if neccessary.
 ```sh
@@ -37,8 +37,8 @@ cd preloaded-ami-builder
 
 ### Update Cluster Configuration File
 - Open hive-example/cluster_preloaded_amis.conf 
-- Replace all "REPLACE_ME"s with the correct values for your AWS setup
-  Note:  make sure to use your newly created AMI IDs for all the AMI IDs
+- Replace all REPLACE_ME's with the correct values for your AWS setup.
+  Note:  make sure to use your newly created AMI ID for all the AMI IDs
 - Replace the SSH_USERNAME in hive-example/dispatch.sh to match the AMI SSH username
 - Replace the 'centos' username in hive-example/hive_job.sh to match the AMI SSH username
 - If not using preloaded AMIs, use hive-example/cluster.conf instead and update hive/run_all.sh to point to cluster.conf.
