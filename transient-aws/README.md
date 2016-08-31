@@ -1,6 +1,6 @@
-# ETL Transient on AWS with CE 5.8
+# ETL Transient Jobs on AWS with Cloudera Enterprise
 
-These scripts can be used as an example end-to-end transient demo for a Hive query with C5.8 running on AWS.  
+These scripts can be used as an example end-to-end transient demo for a Hive query with CDH 5.8 running on AWS.  
 
 ## Instructions
 
