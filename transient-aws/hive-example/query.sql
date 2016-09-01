@@ -29,7 +29,7 @@ create external table store_sales
     ss_net_profit             float
 )
 stored as parquet
-location 's3a://cloudera-demo/datasets/tpcds/nonpartitioned/parq/scale_1/store_sales';
+location 's3a://cloudea-cloud-demo/datasets/tpcds/nonpartitioned/parq/scale_1/store_sales';
 
 create external table customer_demographics
 (
@@ -44,7 +44,7 @@ create external table customer_demographics
     cd_dep_college_count      int
 )
 stored as parquet
-location 's3a://cloudera-demo/datasets/tpcds/nonpartitioned/parq/scale_1/customer_demographics';
+location 's3a://cloudea-cloud-demo/datasets/tpcds/nonpartitioned/parq/scale_1/customer_demographics';
 
 create external table date_dim
 (
@@ -78,7 +78,7 @@ create external table date_dim
     d_current_year            string
 )
 stored as parquet
-location 's3a://cloudera-demo/datasets/tpcds/nonpartitioned/parq/scale_1/date_dim';
+location 's3a://cloudea-cloud-demo/datasets/tpcds/nonpartitioned/parq/scale_1/date_dim';
 
 create external table time_dim
 (
@@ -94,7 +94,7 @@ create external table time_dim
     t_meal_time               string
 )
 stored as parquet
-location 's3a://cloudera-demo/datasets/tpcds/nonpartitioned/parq/scale_1/time_dim';
+location 's3a://cloudea-cloud-demo/datasets/tpcds/nonpartitioned/parq/scale_1/time_dim';
 
 create external table item
 (
@@ -122,7 +122,7 @@ create external table item
     i_product_name            string
 )
 stored as parquet
-location 's3a://cloudera-demo/datasets/tpcds/nonpartitioned/parq/scale_1/item';
+location 's3a://cloudea-cloud-demo/datasets/tpcds/nonpartitioned/parq/scale_1/item';
 
 create external table store
 (
@@ -157,7 +157,7 @@ create external table store
     s_tax_precentage          float
 )
 stored as parquet
-location 's3a://cloudera-demo/datasets/tpcds/nonpartitioned/parq/scale_1/store';
+location 's3a://cloudea-cloud-demo/datasets/tpcds/nonpartitioned/parq/scale_1/store';
 
 create external table customer
 (
@@ -181,7 +181,7 @@ create external table customer
     c_last_review_date        string
 )
 stored as parquet
-location 's3a://cloudera-demo/datasets/tpcds/nonpartitioned/parq/scale_1/customer';
+location 's3a://cloudea-cloud-demo/datasets/tpcds/nonpartitioned/parq/scale_1/customer';
 
 create external table promotion
 (
@@ -206,7 +206,7 @@ create external table promotion
     p_discount_active         string
 )
 stored as parquet
-location 's3a://cloudera-demo/datasets/tpcds/nonpartitioned/parq/scale_1/promotion';
+location 's3a://cloudea-cloud-demo/datasets/tpcds/nonpartitioned/parq/scale_1/promotion';
 
 create external table household_demographics
 (
@@ -217,7 +217,7 @@ create external table household_demographics
     hd_vehicle_count          int
 )
 stored as parquet
-location 's3a://cloudera-demo/datasets/tpcds/nonpartitioned/parq/scale_1/household_demographics';
+location 's3a://cloudea-cloud-demo/datasets/tpcds/nonpartitioned/parq/scale_1/household_demographics';
 
 create external table customer_address
 (
@@ -236,9 +236,9 @@ create external table customer_address
     ca_location_type          string
 )
 stored as parquet
-location 's3a://cloudera-demo/datasets/tpcds/nonpartitioned/parq/scale_1/customer_address';
+location 's3a://cloudea-cloud-demo/datasets/tpcds/nonpartitioned/parq/scale_1/customer_address';
 
-INSERT OVERWRITE DIRECTORY 's3a://cloudera-demo/output/cdh-43/'
+INSERT OVERWRITE DIRECTORY 's3a://[REPLACE_ME]/output/'
 select  dt.d_year 
        ,item.i_brand_id brand_id 
        ,item.i_brand brand

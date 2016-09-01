@@ -1,7 +1,7 @@
 ### TESTED ON RHEL 7.2 and Centos 7.2
 #### Install Director
 sudo yum -y update
-sudo yum install -y wget
+sudo yum install -y wget unzip
 wget --no-check-certificate --no-cookies --header 'Cookie: oraclelicense=accept-securebackup-cookie' http://download.oracle.com/otn-pub/java/jdk/8u102-b14/jdk-8u102-linux-x64.rpm
 sudo yum -y localinstall jdk-8u102-linux-x64.rpm
 cd /etc/yum.repos.d/
@@ -23,8 +23,3 @@ sudo mv packer /usr/local/bin/
 curl "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" -o "awscli-bundle.zip"
 unzip awscli-bundle.zip
 sudo ./awscli-bundle/install -i /usr/local/aws -b /usr/local/bin/aws
-#### SET AWS KEYS (OPTIONAL TO COPY LOGS LATER)
-mkdir ~/.aws/
-echo "[default]" >> ~/.aws/credentials
-echo "aws_access_key_id=REPLACE_ME" >> ~/.aws/credentials
-echo "aws_secret_access_key=REPLACE_ME" >> ~/.aws/credentials
