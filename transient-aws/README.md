@@ -5,11 +5,7 @@ These scripts can be used as an example end-to-end transient demo for a Hive que
 ## Instructions
 
 - Configure AWS settings: http://www.cloudera.com/documentation/director/latest/topics/director_aws_setup_client.html
-- Launch Director Instance (recommend using RHEL 7 or Centos 7 for the Director instance): http://www.cloudera.com/documentation/director/latest/topics/director_deployment_start_launcher.html
-- Copy all files in the transient-aws folder to the Director instance
-```sh
-scp -r -i ~/.ssh/my_aws_key.pem director-scripts/transient-aws ec2-user@[public-ip-address]:/home/ec2-user/
-```
+- Launch an EC2 Instance to install Director later (recommend using RHEL 7 or Centos 7): http://www.cloudera.com/documentation/director/latest/topics/director_deployment_start_launcher.html
 - Copy your AWS SSH private key to the instance's  ~/.ssh/id_rsa (we will use this in the last step)
 ```sh
 scp -i ~/.ssh/my_aws_key.pem ~/.ssh/my_aws_key.pem ec2-user@[public-ip-address]:/home/ec2-user/.ssh/id_rsa
@@ -18,23 +14,34 @@ scp -i ~/.ssh/my_aws_key.pem ~/.ssh/my_aws_key.pem ec2-user@[public-ip-address]:
 ```sh
 ssh -i ~/.ssh/my_aws_key.pem ec2-user@[public-ip-address]
 ```
+- Clone the https://github.com/cloudera/director-scripts/ repository in the Director instance
+```sh
+sudo yum install git -y
+git clone https://github.com/cloudera/director-scripts/
+```
 
 #### All following steps are to be executed in the Director instance
-
 - Install Director and other packages: 
-
 ```sh
+cd transient-aws
 ./install_director.sh
 ```
 
 ### Prepare AMIs
-- Open preloaded-ami-builder/packer-json/rhel.json in a text editor
-- Replace all REPLACE_ME's with the correct values for your AWS setup.
-  Note: this script was tested in us-west-2 with Centos 7.2 base AMI images. If you are using us-west-2 you can keep the example AMI IDs, SSH username, and root device name in all files.
+- Configure your environment with your AWS keys
+```sh
+	export AWS_ACCESS_KEY_ID=xxxx
+	export AWS_SECRET_ACCESS_KEY=xxxxx
+```
+- Go to /director-scripts/preloaded-ami-builder/ (parent directory) 
+- If your keys do not give you access to create new VPCs or Security Groups, open packer-json/rhel.json in a text editor and replace "vpc_id", "subnet_id", and "security_group_id" with existing ones you have access to.
 - Run the AMI builder with the following command.  Replace the region, base AMI ID, and target AMI name if neccessary.
 ```sh
-cd preloaded-ami-builder
-./build-ami.sh us-west-2 ami-d2c924b2 "cdh58-centos7-ami"
+./build-ami.sh -p -P -a "{{ami-id}} {{virtualization_type}} {{ssh_username}} {{root_device_name}}" {{region}} {{base_OS}} {{CDH_PARCEL_REPO}} {{CLOUDERA_MANAGER_REPOSITORY}}
+```
+Here is an example build command that works in us-west-1
+```sh
+./build-ami.sh -p -P -a "ami-af4333cf hvm centos /dev/sda1" us-west-1 centos72 cdh58-ami http://archive.cloudera.com/cdh5/parcels/5.8/ http://archive.cloudera.com/cm5/redhat/7/x86_64/cm/5.8/
 ```
 You can complete the next few sections (everything except the last step) in a new shell window while packer builds the AMI. 
 
@@ -56,7 +63,7 @@ You can complete the next few sections (everything except the last step) in a ne
 aws configure
 ```
 - Open hive-example/dispatch.sh and update the REPLACE_ME section with the S3 location to store the log files
-- Otherwise remove that 
+- Otherwise remove that line
 
 ### Run transient job
 ```sh
