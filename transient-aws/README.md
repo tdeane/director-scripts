@@ -35,7 +35,7 @@ cd transient-aws
 ```
 - Go to /director-scripts/preloaded-ami-builder/ (parent directory) 
 - If your keys do not give you access to create new VPCs or Security Groups, open packer-json/rhel.json in a text editor and replace "vpc_id", "subnet_id", and "security_group_id" with existing ones you have access to.
-- Run the AMI builder with the following command.  Replace the region, base AMI ID, and target AMI name if neccessary.
+- Run the AMI builder with the following command.  Replace all the items in brackets.
 ```sh
 ./build-ami.sh -p -P -a "{{ami-id}} {{virtualization_type}} {{ssh_username}} {{root_device_name}}" {{region}} {{base_OS}} {{CDH_PARCEL_REPO}} {{CLOUDERA_MANAGER_REPOSITORY}}
 ```
